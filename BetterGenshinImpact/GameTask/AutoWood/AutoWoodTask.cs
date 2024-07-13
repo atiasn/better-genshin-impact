@@ -178,7 +178,7 @@ public partial class AutoWoodTask
                 Logger.LogWarning("未能识别到伐木的统计数据");
                 return;
             }
-
+            Logger.LogWarning("print OCR识别到的树木文本：{Name}", woodStatisticsText);
             ParseWoodStatisticsText(taskParam, woodStatisticsText);
             CheckAndPrintWoodQuantities(taskParam);
         }
@@ -192,6 +192,7 @@ public partial class AutoWoodTask
             {
                 // OCR识别木材文本
                 var recognizedText = WoodTextAreaOcr();
+                Logger.LogWarning("xxx OCR识别到的树木名称：{Name}", recognizedText);
                 if (_firstWoodOcr)
                 {
                     // 首次时会重复OCR识别，然后找到最好的OCR结果（即最长的那个）
@@ -345,10 +346,16 @@ public partial class AutoWoodTask
                     }
                     var materialName = match.Groups[1].Value.Trim();
                     Debug.WriteLine($"第一次获取的木材名称：{materialName}");
+                    Logger.LogWarning("未知的木材名：{woodName}", materialName);
                     if (materialName == "般木" | materialName == "极木" | materialName == "殺木")
                     {
                         modifiedResult = ocrResult.Replace(materialName, "椴木");
                         materialName = "椴木";
+                    }else if (materialName == "白楼木")
+
+                    {
+                        modifiedResult = ocrResult.Replace(materialName, "白梣木");
+                        materialName = "白梣木";
                     }
                     if (!ExistWoods.Contains(materialName))
                     {
